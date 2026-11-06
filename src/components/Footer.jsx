@@ -37,7 +37,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           {/* Colonne 1 : Identité & Marque avec dimensions pour 0 CLS */}
-          <div>
+          <div className="footer-brand-col">
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.85rem' }}>
               <img
                 src={logoEmblem}
@@ -61,7 +61,7 @@ export default function Footer() {
           </div>
 
           {/* Colonne 2 : Liens rapides / Navigation */}
-          <div>
+          <div className="footer-nav-col">
             <h4 className="footer-col-title">Navigation</h4>
             <ul className="footer-nav-links">
               <li>
@@ -98,7 +98,7 @@ export default function Footer() {
           </div>
 
           {/* Colonne 3 : Contact & Horaires */}
-          <div>
+          <div className="footer-contact-col">
             <h4 className="footer-col-title">Contact & Horaires</h4>
             <ul className="footer-contact-list">
               <li className="footer-contact-item footer-contact-phone-item">

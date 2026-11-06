@@ -79,7 +79,7 @@ export default function FaqSection() {
         <div className="faq-grid">
           {/* Colonne gauche : Titre */}
           <div>
-            <h2 style={{ fontSize: 'clamp(2rem, 3.4vw, 2.6rem)', fontWeight: 800, letterSpacing: '-0.025em', lineHeight: 1.15, color: '#0f172a', margin: 0, position: 'sticky', top: '110px' }}>
+            <h2 className="faq-main-title">
               Questions fréquentes
             </h2>
           </div>
