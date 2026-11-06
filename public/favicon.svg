@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <rect width="120" height="120" rx="18" fill="#080C14"/>
+  <!-- Emblème géométrique NEQQUA NETTOYAGE (Couleurs exactes du logo : Blanc #FFFFFF & Bleu #35B5FE) -->
+  <!-- Haut gauche (Blanc) -->
+  <polygon points="44,44 62,44 45,68 27,68" fill="#FFFFFF"/>
+  <!-- Bas gauche (Blanc long) -->
+  <polygon points="56,56 74,56 44,98 26,98" fill="#FFFFFF"/>
+  <!-- Haut droite (Bleu Neqqua #35B5FE) -->
+  <polygon points="76,22 94,22 64,68 46,68" fill="#35B5FE"/>
+  <!-- Bas droite (Bleu Neqqua #35B5FE) -->
+  <polygon points="75,56 93,56 76,80 58,80" fill="#35B5FE"/>
+</svg>
