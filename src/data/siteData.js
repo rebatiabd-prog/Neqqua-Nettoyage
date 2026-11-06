@@ -110,6 +110,8 @@ export const pricingPlans = [
     desc: 'Pour un ménage régulier, avec les mêmes horaires chaque mois.',
     isFeatured: true,
     ctaText: "Choisir l'abonnement",
+    stripeUrl: import.meta.env.VITE_STRIPE_ABONNEMENT_URL || '',
+    stripePortalUrl: import.meta.env.VITE_STRIPE_PORTAL_URL || '',
     features: [
       '10 heures d\'intervention par mois incluses',
       'Même intervenante à chaque passage',
