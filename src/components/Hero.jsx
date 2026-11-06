@@ -115,7 +115,9 @@ export default function Hero() {
       {/* Contenu textuel & Call to action */}
       <div className="container hero-content">
         <h1 className={`hero-title ${isVisible ? 'is-visible' : ''}`}>
-          Retrouvez la fraîcheur d’une suite d’hôtel,{' '}
+          Retrouvez la fraîcheur
+          <br />
+          d’une demeure impeccable,{' '}
           <span className="hero-title-accent">chez vous.</span>
         </h1>
         <p className={`hero-description ${isVisible ? 'is-visible' : ''}`}>

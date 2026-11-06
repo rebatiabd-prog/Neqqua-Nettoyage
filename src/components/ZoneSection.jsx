@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { zoneInterventionData } from '../data/siteData';
-import { Clock, Car, MapPin, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Clock, Car, MapPin, CheckCircle2, ArrowRight, ExternalLink, RotateCcw } from 'lucide-react';
 
 export default function ZoneSection() {
   const [isVisible, setIsVisible] = useState(false);
+  const [selectedTown, setSelectedTown] = useState(null);
   const sectionRef = useRef(null);
 
   useEffect(() => {
@@ -45,6 +46,13 @@ export default function ZoneSection() {
   const guaranteesList = Array.isArray(zoneInterventionData?.guarantees) ? zoneInterventionData.guarantees : [];
   const sectorsList = Array.isArray(zoneInterventionData?.sectors) ? zoneInterventionData.sectors : [];
 
+  const mapQuery = selectedTown
+    ? `${selectedTown}, Essonne, France`
+    : 'Arpajon, Essonne, France';
+  const mapZoom = selectedTown ? 13 : 10;
+  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=m&z=${mapZoom}&ie=UTF8&iwloc=&output=embed&hl=fr`;
+  const mapExternalUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+
   return (
     <section ref={sectionRef} id="zone" className="section-block zone-section">
       <div className="container">
@@ -59,15 +67,14 @@ export default function ZoneSection() {
         </div>
 
         {/* Domino 2 : 3 Piliers de réassurance qui tombent individuellement avec icône sécurisée */}
-        <div className="zone-reassurance-strip border-y border-slate-200 py-6 my-8 grid grid-cols-1 md:grid-cols-3 md:divide-x md:divide-slate-200">
+        <div className="zone-reassurance-strip">
           {guaranteesList.map((item, idx) => {
-            // Sécurité anti-crash : fallback sur CheckCircle2 si l'icône est introuvable
             const IconComponent = guaranteesIcons[idx] || CheckCircle2;
             const delay = stripDelays[idx] || '0.2s';
             return (
               <div
                 key={idx}
-                className={`zone-reassurance-item px-4 py-2 flex items-center justify-start md:justify-center gap-3 ${isVisible ? 'is-visible' : ''}`}
+                className={`zone-reassurance-item ${isVisible ? 'is-visible' : ''}`}
                 style={{ '--zone-item-delay': delay }}
               >
                 <div className="zone-reassurance-icon">
@@ -82,47 +89,112 @@ export default function ZoneSection() {
           })}
         </div>
 
-        {/* Domino 3 : Grille des 4 colonnes en cascade naturelle */}
-        <div className="zone-editorial-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 items-start mb-10">
-          {sectorsList.map((sec, index) => {
-            const townsList = Array.isArray(sec?.towns) ? sec.towns : [];
-            const delay = colDelays[index] || '0.4s';
-            return (
-              <div
-                key={sec?.id || index}
-                className={`zone-editorial-col flex flex-col ${isVisible ? 'is-visible' : ''}`}
-                style={{ '--zone-col-delay': delay }}
-              >
-                <div className="zone-editorial-head pb-3 mb-3 border-b border-slate-200">
-                  <span className="zone-editorial-eyebrow">
-                    {sec?.badge || 'Secteur'}
-                  </span>
-                  <h3 className="zone-editorial-name text-slate-900">{sec?.name || 'Essonne'}</h3>
-                </div>
+        {/* Domino 3 : Disposition Côte à Côte (Secteurs Essonne + Google Maps Interactive) */}
+        <div className="zone-content-split">
+          <div className="zone-editorial-grid">
+            {sectorsList.map((sec, index) => {
+              const townsList = Array.isArray(sec?.towns) ? sec.towns : [];
+              const delay = colDelays[index] || '0.4s';
+              return (
+                <div
+                  key={sec?.id || index}
+                  className={`zone-editorial-col ${isVisible ? 'is-visible' : ''}`}
+                  style={{ '--zone-col-delay': delay }}
+                >
+                  <div className="zone-editorial-head">
+                    <span className="zone-editorial-eyebrow">
+                      {sec?.badge || 'Secteur'}
+                    </span>
+                    <h3 className="zone-editorial-name">{sec?.name || 'Essonne'}</h3>
+                  </div>
 
-                <ul className="zone-editorial-list" aria-label={`Communes couvertes en ${sec?.name || 'Essonne'}`}>
-                  {townsList.map((town, idx) => {
-                    const isArpajon = town === 'Arpajon';
-                    return (
-                      <li
-                        key={idx}
-                        className={`zone-editorial-item ${isArpajon ? 'is-arpajon' : ''}`}
-                      >
-                        <span className="zone-editorial-dot" aria-hidden="true"></span>
-                        <span className="zone-editorial-town">
-                          {isArpajon ? <strong>Arpajon</strong> : town}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
+                  <ul className="zone-editorial-list" aria-label={`Communes couvertes en ${sec?.name || 'Essonne'}`}>
+                    {townsList.map((town, idx) => {
+                      const isArpajon = town === 'Arpajon';
+                      const isSelected = selectedTown === town;
+                      return (
+                        <li key={idx}>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedTown((prev) => (prev === town ? null : town))}
+                            className={`zone-editorial-item ${isArpajon ? 'is-arpajon' : ''} ${isSelected ? 'is-selected' : ''}`}
+                            title={`Afficher ${town} sur la carte Google Maps`}
+                          >
+                            <span className="zone-editorial-dot" aria-hidden="true"></span>
+                            <span className="zone-editorial-town">
+                              {isArpajon ? <strong>Arpajon</strong> : town}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Carte Google Maps de la zone d'intervention */}
+          <div className={`zone-map-card ${isVisible ? 'is-visible' : ''}`}>
+            <div className="zone-map-header">
+              <div className="zone-map-header-info">
+                <span className="zone-map-pin-badge" aria-hidden="true">
+                  <MapPin size={15} strokeWidth={2.4} />
+                </span>
+                <div>
+                  <div className="zone-map-title">
+                    {selectedTown ? `${selectedTown} (91)` : "Toute l'Essonne (91) • Base Arpajon"}
+                  </div>
+                  <div className="zone-map-subtitle">
+                    {selectedTown
+                      ? 'Commune couverte • 0 € de frais de déplacement'
+                      : 'Cliquez sur une commune pour zoomer sur la carte'}
+                  </div>
+                </div>
               </div>
-            );
-          })}
+
+              <div className="zone-map-actions">
+                {selectedTown && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedTown(null)}
+                    className="zone-map-reset-btn"
+                    title="Revenir à la vue globale de l'Essonne"
+                  >
+                    <RotateCcw size={13} strokeWidth={2.3} aria-hidden="true" />
+                    <span>Vue globale 91</span>
+                  </button>
+                )}
+                <a
+                  href={mapExternalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="zone-map-external-link"
+                  aria-label="Ouvrir la zone d'intervention dans Google Maps"
+                  title="Ouvrir dans Google Maps"
+                >
+                  <span>Google Maps</span>
+                  <ExternalLink size={13} strokeWidth={2.3} aria-hidden="true" />
+                </a>
+              </div>
+            </div>
+
+            <div className="zone-map-frame-wrap">
+              <iframe
+                key={mapEmbedUrl}
+                src={mapEmbedUrl}
+                title={`Carte Google Maps — Zone d'intervention NEQQUA Nettoyage (${selectedTown || 'Essonne 91'})`}
+                className="zone-map-iframe"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
+            </div>
+          </div>
         </div>
 
         {/* Domino 4 : Bannière du bas */}
-        <div className={`zone-editorial-footer bg-slate-50 border border-slate-200 rounded-xl p-5 ${isVisible ? 'is-visible' : ''}`}>
+        <div className={`zone-editorial-footer ${isVisible ? 'is-visible' : ''}`}>
           <div className="zone-editorial-footer-text">
             <CheckCircle2 size={18} strokeWidth={2.4} style={{ color: '#0369a1', flexShrink: 0 }} aria-hidden="true" />
             <span>
