@@ -1798,6 +1798,25 @@ ul {
   transition-duration: 0.08s !important;
 }
 
+@media (max-width: 768px) {
+  /* Smartphone & Tablette : Les 2 cartes de formules restent stables et immobiles au scroll */
+  .pricing-card:hover,
+  .pricing-card:active,
+  .pricing-card.is-visible:hover,
+  .pricing-card.is-visible:active {
+    transform: none !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05) !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+  }
+
+  .pricing-card-featured:hover,
+  .pricing-card-featured:active {
+    transform: none !important;
+    box-shadow: 0 12px 35px rgba(3, 105, 161, 0.14) !important;
+    border-color: #0369a1 !important;
+  }
+}
+
 .pricing-featured-tag {
   position: absolute;
   top: -14px;
