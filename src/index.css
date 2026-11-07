@@ -1623,6 +1623,27 @@ ul {
     padding: 0 1.35rem 1.35rem 1.35rem;
     align-self: flex-start;
   }
+
+  /* Smartphone & Tablette : Suppression de l'effet bouton et saut au scroll */
+  .service-pillar-item:hover,
+  .service-pillar-item:active,
+  .service-pillar-item.is-visible:hover,
+  .service-pillar-item.is-visible:active {
+    transform: none !important;
+    border-color: rgba(15, 23, 42, 0.1) !important;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .service-pillar-item:hover .pillar-img,
+  .service-pillar-item:active .pillar-img {
+    transform: none !important;
+  }
+
+  .service-pillar-item:hover .pillar-link-arrow,
+  .service-pillar-item:active .pillar-link-arrow {
+    transform: none !important;
+    stroke: #0f172a !important;
+  }
 }
 
 @media (max-width: 480px) {
