@@ -2954,6 +2954,16 @@ ul {
   transform: translateX(4px);
 }
 
+@media (max-width: 640px) {
+  .quote-submit-btn {
+    font-size: 0.86rem;
+    padding: 0.85rem 1.05rem;
+    gap: 0.45rem;
+    line-height: 1.3;
+    text-align: center;
+  }
+}
+
 /* Colonne droite : Carte Contact Direct */
 .contact-side-card {
   background: #ffffff;
@@ -3226,6 +3236,12 @@ ul {
 }
 
 @media (max-width: 768px) {
+  .review-card-modern {
+    flex: 0 0 calc(100vw - 2.3rem);
+    max-width: 340px;
+    padding: 1.45rem 1.35rem 1.35rem 1.35rem;
+  }
+
   .review-card-modern:hover,
   .review-card-modern:active,
   .review-card-modern.is-visible:hover,
