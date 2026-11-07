@@ -309,7 +309,7 @@ export default function QuoteSection({ selectedFormula = 'abonnement', onFormula
               </div>
             ) : (
               <form onSubmit={handleSubmit}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Formulaire de demande de devis & réservation</h3>
+                <h3 className="quote-form-title" style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Formulaire de demande de devis & réservation</h3>
                 <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '0.85rem' }}>
                   Choisissez votre formule et détaillez votre besoin, réponse garantie sous 2h.
                 </p>
@@ -522,6 +522,7 @@ export default function QuoteSection({ selectedFormula = 'abonnement', onFormula
                   </button>
                   {selectedFormula === 'abonnement' && (
                     <div
+                      className="quote-stripe-note"
                       style={{
                         marginTop: '0.6rem',
                         display: 'flex',

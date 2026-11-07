@@ -3027,6 +3027,10 @@ ul {
 }
 
 @media (max-width: 768px) {
+  .quote-form-title {
+    font-size: 1.05rem !important;
+    line-height: 1.3;
+  }
   .input-mock {
     padding: 0.48rem 0.85rem;
   }
@@ -3037,14 +3041,20 @@ ul {
   }
   .quote-submit-btn {
     min-height: 40px;
-    font-size: 0.84rem;
-    padding: 0.62rem 1rem;
-    gap: 0.45rem;
+    font-size: 0.78rem;
+    padding: 0.58rem 0.85rem;
+    gap: 0.35rem;
     line-height: 1.3;
     text-align: center;
   }
-  .contact-side-title {
-    font-size: 1.2rem;
+  .quote-stripe-note {
+    font-size: 0.72rem !important;
+    line-height: 1.35;
+    text-align: center;
+    align-items: flex-start !important;
+  }
+  .quote-stripe-note svg {
+    margin-top: 2px;
   }
 }
 
@@ -3155,27 +3165,6 @@ ul {
   color: #ffffff;
 }
 
-@media (max-width: 768px) {
-  .contact-side-phone-box {
-    min-height: 38px;
-    padding: 0.45rem 0.95rem;
-    margin-bottom: 0.75rem;
-  }
-  .phone-icon-badge {
-    width: 26px;
-    height: 26px;
-  }
-  .contact-side-phone-box .phone-number {
-    font-size: 0.96rem;
-  }
-  .contact-side-card .btn-whatsapp {
-    min-height: 38px !important;
-    padding: 0.58rem 0.95rem !important;
-    font-size: 0.84rem !important;
-    margin-bottom: 1.1rem !important;
-  }
-}
-
 .contact-side-info {
   font-size: 0.9rem;
   color: #475569;
@@ -3186,6 +3175,37 @@ ul {
 
 .contact-side-info strong {
   color: #0f172a;
+}
+
+@media (max-width: 768px) {
+  .contact-side-title {
+    font-size: 1.2rem;
+  }
+  .contact-side-phone-box {
+    min-height: 40px;
+    padding: 0.45rem 0.95rem;
+    margin-bottom: 0.75rem;
+    justify-content: center;
+    gap: 0.55rem;
+  }
+  .phone-icon-badge {
+    width: 24px;
+    height: 24px;
+  }
+  .contact-side-phone-box .phone-number {
+    font-size: 0.94rem;
+    flex-grow: 0;
+  }
+  .contact-side-card .btn-whatsapp {
+    min-height: 40px !important;
+    padding: 0.58rem 0.95rem !important;
+    font-size: 0.84rem !important;
+    margin-bottom: 1.1rem !important;
+  }
+  .contact-side-info {
+    font-size: 0.82rem;
+    padding-top: 1rem;
+  }
 }
 
 /* ==========================================================================
