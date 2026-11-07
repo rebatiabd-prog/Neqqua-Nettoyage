@@ -185,34 +185,29 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Corps : Liens avec numérotation éditoriale */}
+        {/* Corps : Liens du menu mobile */}
         <nav className="mobile-nav-list" aria-label="Liens du menu mobile">
           <a href="#prestations" className="mobile-nav-item" onClick={closeMenu}>
-            <span className="mobile-nav-index">01</span>
             <span className="mobile-nav-label">Nos prestations</span>
             <span className="mobile-nav-arrow" aria-hidden="true">→</span>
           </a>
 
           <a href="#tarifs" className="mobile-nav-item" onClick={closeMenu}>
-            <span className="mobile-nav-index">02</span>
             <span className="mobile-nav-label">Tarifs & Formules</span>
             <span className="mobile-nav-arrow" aria-hidden="true">→</span>
           </a>
 
           <a href="#zone" className="mobile-nav-item" onClick={closeMenu}>
-            <span className="mobile-nav-index">03</span>
             <span className="mobile-nav-label">Zone d'intervention (Essonne)</span>
             <span className="mobile-nav-arrow" aria-hidden="true">→</span>
           </a>
 
           <a href="#avis" className="mobile-nav-item" onClick={closeMenu}>
-            <span className="mobile-nav-index">04</span>
             <span className="mobile-nav-label">Avis de nos clients</span>
             <span className="mobile-nav-arrow" aria-hidden="true">→</span>
           </a>
 
           <a href="#faq" className="mobile-nav-item" onClick={closeMenu}>
-            <span className="mobile-nav-index">05</span>
             <span className="mobile-nav-label">Questions fréquentes (FAQ)</span>
             <span className="mobile-nav-arrow" aria-hidden="true">→</span>
           </a>
