@@ -54,5 +54,8 @@ export default defineConfig(({ mode }) => {
       port: 5173,
     },
     base: './',
+    build: {
+      cssTarget: 'chrome61',
+    },
   }
 })
