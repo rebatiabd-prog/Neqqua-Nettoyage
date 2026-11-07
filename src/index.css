@@ -794,16 +794,16 @@ ul {
 }
 
 .mobile-drawer-logo {
-  height: 36px;
+  height: 30px;
   width: auto;
   object-fit: contain;
 }
 
 .mobile-drawer-close {
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1441,6 +1441,32 @@ ul {
   max-width: 24ch;
 }
 
+@media (max-width: 768px) {
+  .section-block,
+  .services-section,
+  .pricing-section,
+  .zone-section,
+  .quote-section,
+  .reviews-section,
+  .faq-section {
+    padding-block: 2.75rem !important;
+  }
+
+  .services-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .services-main-title,
+  .pricing-main-title,
+  .zone-title,
+  .quote-main-title,
+  .reviews-main-title,
+  .faq-main-title {
+    font-size: clamp(1.45rem, 5.6vw, 1.65rem) !important;
+    line-height: 1.2;
+  }
+}
+
 .services-streamlined-list {
   display: flex;
   flex-direction: column;
@@ -1958,6 +1984,30 @@ ul {
   font-size: 1.1rem;
   line-height: 1.2;
   flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .pricing-card-title {
+    font-size: 1.22rem;
+  }
+  .pricing-num {
+    font-size: 1.95rem;
+  }
+  .pricing-unit {
+    font-size: 0.9rem;
+  }
+  .pricing-card-desc {
+    font-size: 0.88rem;
+    margin-bottom: 1rem;
+  }
+  .pricing-features li {
+    font-size: 0.85rem;
+    padding-block: 0.45rem;
+    gap: 0.55rem;
+  }
+  .pricing-check {
+    font-size: 0.95rem;
+  }
 }
 
 /* Origin Button — Animation d'expansion au curseur (Origin UI Style - Format Arrondi) */
@@ -2978,6 +3028,14 @@ ul {
 }
 
 @media (max-width: 768px) {
+  .input-mock {
+    padding: 0.48rem 0.85rem;
+  }
+  .quote-date-input,
+  .quote-datetime-row .quote-select {
+    min-height: 40px;
+    height: 40px;
+  }
   .quote-submit-btn {
     min-height: 40px;
     font-size: 0.84rem;
@@ -2985,6 +3043,9 @@ ul {
     gap: 0.45rem;
     line-height: 1.3;
     text-align: center;
+  }
+  .contact-side-title {
+    font-size: 1.2rem;
   }
 }
 
@@ -3223,9 +3284,8 @@ ul {
 }
 
 @media (max-width: 768px) {
-  .reviews-nav-btn {
-    width: 36px;
-    height: 36px;
+  .reviews-nav-controls {
+    display: none !important;
   }
 }
 
@@ -3393,25 +3453,13 @@ ul {
 
 @media (max-width: 640px) {
   .reviews-carousel-header {
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.35rem;
     align-items: center;
   }
   .review-card-modern {
-    flex: 0 0 84vw;
-    max-width: 330px;
-    padding: 1.5rem 1.4rem 1.35rem 1.4rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .reviews-main-title {
-    font-size: clamp(1.8rem, 6.8vw, 2.2rem);
-  }
-  .reviews-nav-btn {
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
+    flex: 0 0 calc(100vw - 2.3rem);
+    max-width: 340px;
+    padding: 1.45rem 1.35rem 1.35rem 1.35rem;
   }
 }
 
