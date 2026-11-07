@@ -4,6 +4,11 @@ import { siteConfig } from '../data/siteData';
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
+  const [videoSrc] = useState(() =>
+    typeof window !== 'undefined' && window.innerWidth <= 768
+      ? '/hero-bg-mobile.mp4'
+      : '/hero-bg.mp4'
+  );
   const sectionRef = useRef(null);
   const videoRef = useRef(null);
   const isInViewRef = useRef(true);
@@ -11,14 +16,27 @@ export default function Hero() {
   const tryPlay = useCallback(() => {
     const video = videoRef.current;
     if (!video || !isInViewRef.current) return;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
     if (video.paused) {
-      video.muted = true;
-      video.defaultMuted = true;
       const playPromise = video.play();
       if (playPromise && typeof playPromise.catch === 'function') {
         playPromise.catch(() => {});
       }
     }
+  }, []);
+
+  const setVideoNode = useCallback((el) => {
+    if (el) {
+      el.muted = true;
+      el.defaultMuted = true;
+      el.playsInline = true;
+      el.setAttribute('muted', '');
+      el.setAttribute('playsinline', '');
+      el.setAttribute('webkit-playsinline', '');
+    }
+    videoRef.current = el;
   }, []);
 
   useEffect(() => {
@@ -45,18 +63,18 @@ export default function Hero() {
       tryPlay();
     };
 
-    if (video.readyState >= 2) {
+    if (video.readyState >= 1) {
       setIsVideoReady(true);
     }
 
-    video.addEventListener('loadedmetadata', tryPlay);
+    video.addEventListener('loadedmetadata', markReadyAndPlay);
     video.addEventListener('loadeddata', markReadyAndPlay);
     video.addEventListener('canplay', markReadyAndPlay);
     video.addEventListener('playing', markReadyAndPlay);
     tryPlay();
 
     // Écouteurs de déblocage tactiles (mode Économie d'énergie iOS / Android)
-    const events = ['touchend', 'click', 'pointerup'];
+    const events = ['touchstart', 'touchend', 'pointerdown', 'pointerup', 'click', 'scroll'];
     const onUserInteraction = () => {
       tryPlay();
       if (video && !video.paused) {
@@ -96,7 +114,7 @@ export default function Hero() {
 
     return () => {
       clearTimeout(timer);
-      video.removeEventListener('loadedmetadata', tryPlay);
+      video.removeEventListener('loadedmetadata', markReadyAndPlay);
       video.removeEventListener('loadeddata', markReadyAndPlay);
       video.removeEventListener('canplay', markReadyAndPlay);
       video.removeEventListener('playing', markReadyAndPlay);
@@ -114,11 +132,13 @@ export default function Hero() {
       ref={sectionRef}
       className="hero-section hero-cinematic"
       onClick={tryPlay}
+      onTouchStart={tryPlay}
       onTouchEnd={tryPlay}
     >
       {/* Vidéo de fond optimisée FastStart (720p mobile / 1080p PC) avec poster instantané */}
       <video
-        ref={videoRef}
+        ref={setVideoNode}
+        src={videoSrc}
         poster="/hero-poster.jpg"
         autoPlay
         loop
@@ -134,10 +154,7 @@ export default function Hero() {
         onCanPlay={() => setIsVideoReady(true)}
         onPlaying={() => setIsVideoReady(true)}
         className={`hero-bg-video ${isVideoReady ? 'is-ready' : ''}`}
-      >
-        <source src="/hero-bg-mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
-        <source src="/hero-bg.mp4" type="video/mp4" />
-      </video>
+      />
 
       {/* Overlay sombre pour contraste & lisibilité parfaite */}
       <div className="hero-bg-overlay"></div>

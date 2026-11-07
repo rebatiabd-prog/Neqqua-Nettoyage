@@ -1254,6 +1254,7 @@ ul {
     min-height: 100%;
     object-fit: cover;
     object-position: center center;
+    opacity: 1 !important;
     contain: none !important;
     pointer-events: none;
     border: none;
