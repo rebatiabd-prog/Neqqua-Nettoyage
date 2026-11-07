@@ -1604,6 +1604,8 @@ ul {
     justify-content: space-between;
     gap: 0;
     padding-right: 0;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
   }
 
   .pillar-thumb {
@@ -1628,23 +1630,39 @@ ul {
     align-self: flex-start;
   }
 
-  /* Smartphone & Tablette : Suppression de l'effet bouton et saut au scroll */
+  /* Smartphone & Tablette : Suppression totale du hover bleu, de l'effet bouton et du saut au scroll */
   .service-pillar-item:hover,
   .service-pillar-item:active,
+  .service-pillar-item:focus,
+  .service-pillar-item:focus-visible,
   .service-pillar-item.is-visible:hover,
-  .service-pillar-item.is-visible:active {
+  .service-pillar-item.is-visible:active,
+  .service-pillar-item.is-visible:focus,
+  .service-pillar-item.is-visible:focus-visible {
     transform: none !important;
     border-color: rgba(15, 23, 42, 0.1) !important;
     box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+    outline: none !important;
+  }
+
+  .service-pillar-item:hover .pillar-title,
+  .service-pillar-item:active .pillar-title,
+  .service-pillar-item:focus .pillar-title,
+  .service-pillar-item:hover .pillar-link-text,
+  .service-pillar-item:active .pillar-link-text,
+  .service-pillar-item:focus .pillar-link-text {
+    color: #0f172a !important;
   }
 
   .service-pillar-item:hover .pillar-img,
-  .service-pillar-item:active .pillar-img {
+  .service-pillar-item:active .pillar-img,
+  .service-pillar-item:focus .pillar-img {
     transform: none !important;
   }
 
   .service-pillar-item:hover .pillar-link-arrow,
-  .service-pillar-item:active .pillar-link-arrow {
+  .service-pillar-item:active .pillar-link-arrow,
+  .service-pillar-item:focus .pillar-link-arrow {
     transform: none !important;
     stroke: #0f172a !important;
   }
