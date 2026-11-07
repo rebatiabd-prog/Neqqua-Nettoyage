@@ -30,7 +30,7 @@ export default function Footer() {
   const phoneDisplay = siteConfig?.phoneDisplay || '06 59 51 98 59';
   const whatsappNumber = siteConfig?.whatsappNumber || '33659519859';
   const email = siteConfig?.email || 'contact.neqqua@gmail.com';
-  const hours = siteConfig?.hours || 'Lun – Sam (07h30 – 19h30)';
+  const hours = siteConfig?.hours || 'Lun – Sam : 9h00 – 12h00 / 13h30 – 17h30';
 
   return (
     <footer className="site-footer">

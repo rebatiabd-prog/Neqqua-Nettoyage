@@ -5,7 +5,7 @@ export const siteConfig = {
   phoneDisplay: '06 59 51 98 59',
   phoneCall: '+33659519859',
   email: 'contact.neqqua@gmail.com',
-  hours: 'Lun – Sam (07h30 – 19h30)',
+  hours: 'Lun – Sam : 9h00 – 12h00 / 13h30 – 17h30',
   whatsappNumber: '33659519859',
   logoEmblem: '/logo-neqqua-horizontal.png',
   logoFull: '/logo-neqqua-horizontal.png',
@@ -113,7 +113,7 @@ export const pricingPlans = [
     stripeUrl: import.meta.env.VITE_STRIPE_ABONNEMENT_URL || '',
     stripePortalUrl: import.meta.env.VITE_STRIPE_PORTAL_URL || '',
     features: [
-      '10 heures d\'intervention par mois incluses',
+      '3 à 4 interventions par semaine incluses (au choix)',
       'Même intervenante à chaque passage',
       'Produits et matériel fournis',
       'Planning fixe, à deux semaines d\'avance',
@@ -128,7 +128,7 @@ export const faqItems = [
     id: 'faq-1',
     question: 'Fournissez-vous les produits ménagers et le matériel ?',
     answer:
-      'Oui, nous venons entièrement équipés avec du matériel professionnel : aspirateur haute performance, serpillières microfibres lavées à 60°C, produits dégraissants, anticalcaires et nettoyants neutres sans danger pour vos enfants et animaux. Si vous préférez que nous utilisions vos propres produits (savon noir, vinaigre ménager, produits bio), nous nous adaptons selon vos souhaits.',
+      'Oui, nous venons entièrement équipés avec du matériel professionnel : serpillières microfibres lavées à 60°C, produits dégraissants, anticalcaires et nettoyants neutres sans danger pour vos enfants et animaux. Si vous préférez que nous utilisions vos propres produits (savon noir, vinaigre ménager, produits bio), nous nous adaptons selon vos souhaits.',
   },
   {
     id: 'faq-2',
@@ -152,7 +152,7 @@ export const faqItems = [
     id: 'faq-5',
     question: 'Quels sont vos délais d\'intervention et les tarifs ?',
     answer:
-      'Nos tarifs sont transparents : 30 €/h en ponctuel ou 299 €/mois pour 10h garanties. Nous établissons un devis clair sous 2h après votre demande. En cas de besoin urgent, un simple appel direct ou un échange WhatsApp nous permet généralement de caler une intervention sous 24h à 48h selon nos disponibilités de la semaine.',
+      'Nos tarifs sont transparents : 30 €/h en ponctuel ou 299 €/mois pour 3 à 4 interventions par semaine au choix. Nous établissons un devis clair sous 2h après votre demande. En cas de besoin urgent, un simple appel direct ou un échange WhatsApp nous permet généralement de caler une intervention sous 24h à 48h selon nos disponibilités de la semaine.',
   },
   {
     id: 'faq-6',
