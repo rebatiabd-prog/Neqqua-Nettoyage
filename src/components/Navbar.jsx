@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { siteConfig } from '../data/siteData';
-import { MessageCircle, Phone, X } from 'lucide-react';
+import { MessageCircle, Phone, X, MapPin, ArrowRight } from 'lucide-react';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -189,34 +189,35 @@ export default function Navbar() {
         <nav className="mobile-nav-list" aria-label="Liens du menu mobile">
           <a href="#prestations" className="mobile-nav-item" onClick={closeMenu}>
             <span className="mobile-nav-label">Nos prestations</span>
-            <span className="mobile-nav-arrow" aria-hidden="true">→</span>
+            <ArrowRight size={16} strokeWidth={2.2} className="mobile-nav-arrow" aria-hidden="true" />
           </a>
 
           <a href="#tarifs" className="mobile-nav-item" onClick={closeMenu}>
             <span className="mobile-nav-label">Tarifs & Formules</span>
-            <span className="mobile-nav-arrow" aria-hidden="true">→</span>
+            <ArrowRight size={16} strokeWidth={2.2} className="mobile-nav-arrow" aria-hidden="true" />
           </a>
 
           <a href="#zone" className="mobile-nav-item" onClick={closeMenu}>
             <span className="mobile-nav-label">Zone d'intervention (Essonne)</span>
-            <span className="mobile-nav-arrow" aria-hidden="true">→</span>
+            <ArrowRight size={16} strokeWidth={2.2} className="mobile-nav-arrow" aria-hidden="true" />
           </a>
 
           <a href="#avis" className="mobile-nav-item" onClick={closeMenu}>
             <span className="mobile-nav-label">Avis de nos clients</span>
-            <span className="mobile-nav-arrow" aria-hidden="true">→</span>
+            <ArrowRight size={16} strokeWidth={2.2} className="mobile-nav-arrow" aria-hidden="true" />
           </a>
 
           <a href="#faq" className="mobile-nav-item" onClick={closeMenu}>
             <span className="mobile-nav-label">Questions fréquentes (FAQ)</span>
-            <span className="mobile-nav-arrow" aria-hidden="true">→</span>
+            <ArrowRight size={16} strokeWidth={2.2} className="mobile-nav-arrow" aria-hidden="true" />
           </a>
         </nav>
 
         {/* Pied de tiroir : Zone de conversion accessible au pouce */}
         <div className="mobile-drawer-footer">
           <a href="#devis" className="btn btn-primary mobile-drawer-cta" onClick={closeMenu}>
-            Demander un devis gratuit →
+            <span>Demander un devis gratuit</span>
+            <ArrowRight size={15} strokeWidth={2.4} aria-hidden="true" />
           </a>
 
           <div className="mobile-drawer-contact-grid">
@@ -225,7 +226,7 @@ export default function Navbar() {
               className="mobile-drawer-contact-btn mono-num"
               onClick={closeMenu}
             >
-              <Phone size={16} strokeWidth={2.2} aria-hidden="true" />
+              <Phone size={14} strokeWidth={2.2} aria-hidden="true" />
               <span>{phoneDisplay}</span>
             </a>
 
@@ -236,13 +237,14 @@ export default function Navbar() {
               className="mobile-drawer-contact-btn mobile-drawer-wa"
               onClick={closeMenu}
             >
-              <MessageCircle size={16} aria-hidden="true" />
+              <MessageCircle size={14} aria-hidden="true" />
               <span>WhatsApp 7j/7</span>
             </a>
           </div>
 
           <div className="mobile-drawer-reassurance">
-            <span>📍 Basé à Arpajon • Toute l'Essonne • Intervention sous 24h-48h</span>
+            <MapPin size={13} strokeWidth={2.3} style={{ color: '#0ea5e9', flexShrink: 0 }} aria-hidden="true" />
+            <span>Basé à Arpajon • Toute l'Essonne • Intervention sous 24h-48h</span>
           </div>
         </div>
       </aside>
