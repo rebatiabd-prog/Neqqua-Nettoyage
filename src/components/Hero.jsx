@@ -1,97 +1,125 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { siteConfig } from '../data/siteData';
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false);
+  const sectionRef = useRef(null);
   const videoRef = useRef(null);
+  const isInViewRef = useRef(true);
 
-  const tryPlay = () => {
+  const tryPlay = useCallback(() => {
     const video = videoRef.current;
-    if (video && video.paused) {
+    if (!video || !isInViewRef.current) return;
+    if (video.paused) {
       video.muted = true;
       video.defaultMuted = true;
-      video.play().catch(() => {});
-    }
-  };
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (video) {
-      // Configuration matérielle native stricte pour iOS Safari & Android
-      video.muted = true;
-      video.defaultMuted = true;
-      video.loop = true;
-      video.setAttribute('muted', '');
-      video.setAttribute('playsinline', '');
-      video.setAttribute('webkit-playsinline', '');
-
-      // Démarrage initial dès que les métadonnées sont chargées
-      video.addEventListener('loadedmetadata', tryPlay);
-      video.addEventListener('canplay', tryPlay);
-      video.addEventListener('loadeddata', tryPlay);
-      tryPlay();
-
-      // Écouteurs de déblocage tactiles officiels reconnus par Apple (touchend, pointerup, click)
-      const events = ['touchend', 'click', 'pointerup', 'scroll'];
-      const onUserInteraction = () => {
-        tryPlay();
-        if (video && !video.paused) {
-          events.forEach((ev) => window.removeEventListener(ev, onUserInteraction));
-        }
-      };
-
-      events.forEach((ev) => window.addEventListener(ev, onUserInteraction, { passive: true }));
-
-      // Reprise automatique si l'utilisateur change d'onglet ou réactive son écran
-      const handleVisibilityChange = () => {
-        if (!document.hidden) {
-          tryPlay();
-        }
-      };
-      document.addEventListener('visibilitychange', handleVisibilityChange);
-
-      const timer = setTimeout(() => {
-        setIsVisible(true);
-        setIsVideoReady(true);
-      }, 150);
-
-      return () => {
-        video.removeEventListener('loadedmetadata', tryPlay);
-        video.removeEventListener('canplay', tryPlay);
-        video.removeEventListener('loadeddata', tryPlay);
-        events.forEach((ev) => window.removeEventListener(ev, onUserInteraction));
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
-        clearTimeout(timer);
-      };
-    } else {
-      const timer = setTimeout(() => {
-        setIsVisible(true);
-        setIsVideoReady(true);
-      }, 150);
-      return () => clearTimeout(timer);
+      const playPromise = video.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {});
+      }
     }
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 80);
+
+    const video = videoRef.current;
+    if (!video) {
+      return () => clearTimeout(timer);
+    }
+
+    // Configuration matérielle native stricte pour iOS Safari, Android & Desktop
+    video.muted = true;
+    video.defaultMuted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+
+    const markReadyAndPlay = () => {
+      setIsVideoReady(true);
+      tryPlay();
+    };
+
+    if (video.readyState >= 2) {
+      setIsVideoReady(true);
+    }
+
+    video.addEventListener('loadedmetadata', tryPlay);
+    video.addEventListener('loadeddata', markReadyAndPlay);
+    video.addEventListener('canplay', markReadyAndPlay);
+    video.addEventListener('playing', markReadyAndPlay);
+    tryPlay();
+
+    // Écouteurs de déblocage tactiles (mode Économie d'énergie iOS / Android)
+    const events = ['touchend', 'click', 'pointerup'];
+    const onUserInteraction = () => {
+      tryPlay();
+      if (video && !video.paused) {
+        events.forEach((ev) => window.removeEventListener(ev, onUserInteraction));
+      }
+    };
+    events.forEach((ev) => window.addEventListener(ev, onUserInteraction, { passive: true }));
+
+    // Reprise automatique au retour sur l'onglet
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        video.pause();
+      } else if (isInViewRef.current) {
+        tryPlay();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Pause automatique hors écran pour libérer le GPU pendant le scroll
+    let observer = null;
+    if (typeof IntersectionObserver !== 'undefined' && sectionRef.current) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (!entry) return;
+          isInViewRef.current = entry.isIntersecting;
+          if (entry.isIntersecting) {
+            tryPlay();
+          } else {
+            video.pause();
+          }
+        },
+        { threshold: 0.05 }
+      );
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      clearTimeout(timer);
+      video.removeEventListener('loadedmetadata', tryPlay);
+      video.removeEventListener('loadeddata', markReadyAndPlay);
+      video.removeEventListener('canplay', markReadyAndPlay);
+      video.removeEventListener('playing', markReadyAndPlay);
+      events.forEach((ev) => window.removeEventListener(ev, onUserInteraction));
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (observer) observer.disconnect();
+    };
+  }, [tryPlay]);
 
   const phoneCall = siteConfig?.phoneCall || '+33659519859';
   const phoneDisplay = siteConfig?.phoneDisplay || '06 59 51 98 59';
 
   return (
     <section
+      ref={sectionRef}
       className="hero-section hero-cinematic"
       onClick={tryPlay}
       onTouchEnd={tryPlay}
     >
-      {/* Vidéo de fond avec attributs directs et boucle matérielle native sans coupure */}
+      {/* Vidéo de fond optimisée FastStart (720p mobile / 1080p PC) avec poster instantané */}
       <video
-        ref={(el) => {
-          if (el) {
-            el.muted = true;
-            el.defaultMuted = true;
-          }
-          videoRef.current = el;
-        }}
-        src="/hero-bg.mp4"
+        ref={videoRef}
+        poster="/hero-poster.jpg"
         autoPlay
         loop
         muted
@@ -104,8 +132,10 @@ export default function Hero() {
         controls={false}
         onLoadedData={() => setIsVideoReady(true)}
         onCanPlay={() => setIsVideoReady(true)}
+        onPlaying={() => setIsVideoReady(true)}
         className={`hero-bg-video ${isVideoReady ? 'is-ready' : ''}`}
       >
+        <source src="/hero-bg-mobile.mp4" type="video/mp4" media="(max-width: 768px)" />
         <source src="/hero-bg.mp4" type="video/mp4" />
       </video>
 

@@ -863,9 +863,10 @@ ul {
 .mobile-nav-drawer.is-open .mobile-nav-item:nth-child(2) { transition-delay: 100ms; }
 .mobile-nav-drawer.is-open .mobile-nav-item:nth-child(3) { transition-delay: 150ms; }
 .mobile-nav-drawer.is-open .mobile-nav-item:nth-child(4) { transition-delay: 200ms; }
-.mobile-nav-drawer.is-open .mobile-drawer-cta { transition-delay: 250ms; }
-.mobile-nav-drawer.is-open .mobile-drawer-contact-grid { transition-delay: 300ms; }
-.mobile-nav-drawer.is-open .mobile-drawer-reassurance { transition-delay: 350ms; }
+.mobile-nav-drawer.is-open .mobile-nav-item:nth-child(5) { transition-delay: 250ms; }
+.mobile-nav-drawer.is-open .mobile-drawer-cta { transition-delay: 300ms; }
+.mobile-nav-drawer.is-open .mobile-drawer-contact-grid { transition-delay: 350ms; }
+.mobile-nav-drawer.is-open .mobile-drawer-reassurance { transition-delay: 400ms; }
 
 .mobile-nav-item {
   display: flex;
@@ -1029,6 +1030,10 @@ ul {
   align-items: center;
   overflow: hidden;
   background-color: #070a14;
+  background-image: url('/hero-poster.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
   color: #ffffff;
   border-bottom: none;
 }
@@ -1295,14 +1300,13 @@ ul {
     line-height: 1.35;
   }
 
-  /* 💥 TITRE GRAND, PUISSANT & ÉQUILIBRÉ */
+  /* 💥 TITRE GRAND, PUISSANT & ÉQUILIBRÉ (3 lignes strictes sur smartphone) */
   .hero-title {
-    font-size: clamp(1.9rem, 7.6vw, 2.55rem);
-    line-height: 1.1;
+    font-size: clamp(1.52rem, 6.3vw, 2.15rem);
+    line-height: 1.14;
     margin-bottom: 1rem;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.025em;
     text-align: center;
-    text-wrap: balance;
     color: #ffffff;
     font-weight: 850;
     text-shadow: 0 4px 28px rgba(0, 0, 0, 0.95);
@@ -1358,8 +1362,8 @@ ul {
 
 @media (max-width: 380px) {
   .hero-title {
-    font-size: 1.95rem;
-    line-height: 1.12;
+    font-size: 1.45rem;
+    line-height: 1.15;
   }
   .hero-description {
     font-size: 0.78rem;
@@ -2538,6 +2542,10 @@ ul {
   .zone-map-header {
     padding: 0.75rem 0.9rem;
   }
+  .zone-map-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
   .zone-map-frame-wrap {
     height: 280px;
     min-height: 280px;
@@ -3143,6 +3151,15 @@ ul {
   transition-delay: 0s !important;
 }
 
+@media (max-width: 768px) {
+  .review-card-modern:hover,
+  .review-card-modern:active,
+  .review-card-modern.is-visible:hover,
+  .review-card-modern.is-visible:active {
+    transform: none !important;
+  }
+}
+
 /* En-tête de carte : Étoiles + Guillemet filigrane */
 .review-card-top {
   display: flex;
@@ -3380,6 +3397,14 @@ ul {
   border-color: #0369a1;
   transform: translateY(-2px);
   box-shadow: 0 10px 28px rgba(3, 105, 161, 0.14);
+}
+
+@media (max-width: 768px) {
+  .faq-accordion-item:hover,
+  .faq-accordion-item:active,
+  .faq-accordion-item.is-open {
+    transform: none !important;
+  }
 }
 
 .faq-accordion-trigger {
@@ -3724,10 +3749,10 @@ ul {
 /* Modale Mentions Légales */
 .legal-modal-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
+  inset: 0;
+  width: 100%;
   height: 100vh;
+  height: 100dvh;
   background-color: rgba(3, 7, 18, 0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);

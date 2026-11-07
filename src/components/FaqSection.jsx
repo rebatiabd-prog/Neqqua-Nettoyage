@@ -4,11 +4,19 @@ import { faqItems } from '../data/siteData';
 export default function FaqSection() {
   const [openId, setOpenId] = useState('faq-1');
   const listRef = useRef(null);
-  const [lockedMinHeight, setLockedMinHeight] = useState(null);
+  const maxLockedHeightRef = useRef(0);
 
   const measureAndLock = useCallback(() => {
     const listEl = listRef.current;
     if (!listEl) return;
+
+    // Sur mobile et tablette (colonne unique), ne pas verrouiller une hauteur minimale
+    // qui créerait un grand vide sous l'accordéon.
+    if (typeof window !== 'undefined' && window.innerWidth <= 920) {
+      maxLockedHeightRef.current = 0;
+      listEl.style.minHeight = '';
+      return;
+    }
 
     const items = Array.from(listEl.querySelectorAll('.faq-accordion-item'));
     if (!items.length) return;
@@ -33,24 +41,31 @@ export default function FaqSection() {
     const gapTotal = (items.length - 1) * 12;
     const targetHeight = Math.ceil(totalClosedHeight + gapTotal + maxAnswerHeight + 16);
 
-    setLockedMinHeight((prev) => Math.max(prev || 0, targetHeight));
+    maxLockedHeightRef.current = Math.max(maxLockedHeightRef.current, targetHeight);
+    listEl.style.minHeight = `${maxLockedHeightRef.current}px`;
   }, []);
 
   useLayoutEffect(() => {
     measureAndLock();
 
-    if (listRef.current) {
-      const currentH = listRef.current.offsetHeight;
+    const listEl = listRef.current;
+    if (listEl && (typeof window === 'undefined' || window.innerWidth > 920)) {
+      const currentH = listEl.offsetHeight;
       if (currentH > 0) {
-        setLockedMinHeight((prev) => Math.max(prev || 0, currentH));
+        maxLockedHeightRef.current = Math.max(maxLockedHeightRef.current, currentH);
+        listEl.style.minHeight = `${maxLockedHeightRef.current}px`;
       }
     }
 
     let resizeTimer = null;
     const handleResize = () => {
-      // Ignorer les micro-variations sur mobile lors du repli de la barre d'adresse
-      if (typeof window !== 'undefined' && window.innerWidth <= 768) return;
-      setLockedMinHeight(null);
+      if (typeof window !== 'undefined' && window.innerWidth <= 920) {
+        maxLockedHeightRef.current = 0;
+        if (listRef.current) listRef.current.style.minHeight = '';
+        return;
+      }
+      maxLockedHeightRef.current = 0;
+      if (listRef.current) listRef.current.style.minHeight = '';
       if (resizeTimer) clearTimeout(resizeTimer);
       resizeTimer = setTimeout(measureAndLock, 50);
     };
@@ -88,7 +103,6 @@ export default function FaqSection() {
           <div
             ref={listRef}
             className="faq-accordion-list"
-            style={lockedMinHeight ? { minHeight: `${lockedMinHeight}px` } : undefined}
           >
             {faqList.map((item, idx) => {
               const itemId = item?.id || `faq-${idx}`;
