@@ -4,19 +4,11 @@ import { faqItems } from '../data/siteData';
 export default function FaqSection() {
   const [openId, setOpenId] = useState('faq-1');
   const listRef = useRef(null);
-  const maxLockedHeightRef = useRef(0);
+  const lastWidthRef = useRef(typeof window !== 'undefined' ? window.innerWidth : 0);
 
   const measureAndLock = useCallback(() => {
     const listEl = listRef.current;
     if (!listEl) return;
-
-    // Sur mobile et tablette (colonne unique), ne pas verrouiller une hauteur minimale
-    // qui créerait un grand vide sous l'accordéon.
-    if (typeof window !== 'undefined' && window.innerWidth <= 920) {
-      maxLockedHeightRef.current = 0;
-      listEl.style.minHeight = '';
-      return;
-    }
 
     const items = Array.from(listEl.querySelectorAll('.faq-accordion-item'));
     if (!items.length) return;
@@ -29,43 +21,39 @@ export default function FaqSection() {
       if (trigger) {
         totalClosedHeight += trigger.offsetHeight + 2;
       }
+      const body = item.querySelector('.faq-accordion-body');
       const inner = item.querySelector('.faq-accordion-inner');
-      if (inner) {
-        const h = inner.scrollHeight || inner.offsetHeight;
-        if (h > maxAnswerHeight) {
-          maxAnswerHeight = h;
-        }
+      const h = body ? body.offsetHeight : inner ? inner.scrollHeight : 0;
+      if (h > maxAnswerHeight) {
+        maxAnswerHeight = h;
       }
     });
 
-    const gapTotal = (items.length - 1) * 12;
-    const targetHeight = Math.ceil(totalClosedHeight + gapTotal + maxAnswerHeight + 16);
+    let gapPx = 12;
+    if (typeof window !== 'undefined' && typeof window.getComputedStyle === 'function') {
+      const parsedGap = parseFloat(window.getComputedStyle(listEl).rowGap);
+      if (!Number.isNaN(parsedGap)) {
+        gapPx = parsedGap;
+      }
+    }
 
-    maxLockedHeightRef.current = Math.max(maxLockedHeightRef.current, targetHeight);
-    listEl.style.minHeight = `${maxLockedHeightRef.current}px`;
+    const gapTotal = (items.length - 1) * gapPx;
+    const targetHeight = Math.ceil(totalClosedHeight + gapTotal + maxAnswerHeight + 6);
+
+    listEl.style.minHeight = `${targetHeight}px`;
   }, []);
 
   useLayoutEffect(() => {
     measureAndLock();
 
-    const listEl = listRef.current;
-    if (listEl && (typeof window === 'undefined' || window.innerWidth > 920)) {
-      const currentH = listEl.offsetHeight;
-      if (currentH > 0) {
-        maxLockedHeightRef.current = Math.max(maxLockedHeightRef.current, currentH);
-        listEl.style.minHeight = `${maxLockedHeightRef.current}px`;
-      }
-    }
-
     let resizeTimer = null;
     const handleResize = () => {
-      if (typeof window !== 'undefined' && window.innerWidth <= 920) {
-        maxLockedHeightRef.current = 0;
-        if (listRef.current) listRef.current.style.minHeight = '';
-        return;
-      }
-      maxLockedHeightRef.current = 0;
-      if (listRef.current) listRef.current.style.minHeight = '';
+      if (typeof window === 'undefined') return;
+      const currentWidth = window.innerWidth;
+      // Ignore les variations de hauteur de barre d'adresse mobile si la largeur n'a pas changé
+      if (Math.abs(currentWidth - lastWidthRef.current) < 2) return;
+      lastWidthRef.current = currentWidth;
+
       if (resizeTimer) clearTimeout(resizeTimer);
       resizeTimer = setTimeout(measureAndLock, 50);
     };
@@ -79,7 +67,7 @@ export default function FaqSection() {
       if (resizeTimer) clearTimeout(resizeTimer);
       window.removeEventListener('resize', handleResize);
     };
-  }, [openId, measureAndLock]);
+  }, [measureAndLock]);
 
   const toggleItem = (id) => {
     setOpenId((prev) => (prev === id ? null : id));
@@ -130,7 +118,9 @@ export default function FaqSection() {
                     </svg>
                   </button>
                   <div className="faq-accordion-content">
-                    <div className="faq-accordion-inner">{item?.answer || ''}</div>
+                    <div className="faq-accordion-inner">
+                      <div className="faq-accordion-body">{item?.answer || ''}</div>
+                    </div>
                   </div>
                 </div>
               );
