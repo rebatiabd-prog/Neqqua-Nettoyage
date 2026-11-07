@@ -3532,8 +3532,25 @@ ul {
 @media (max-width: 768px) {
   .faq-accordion-item:hover,
   .faq-accordion-item:active,
+  .faq-accordion-item:focus,
   .faq-accordion-item.is-open {
     transform: none !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  .faq-accordion-trigger,
+  .faq-accordion-trigger:hover,
+  .faq-accordion-trigger:active,
+  .faq-accordion-trigger:focus,
+  .faq-accordion-trigger:focus-visible {
+    color: #0f172a !important;
+    -webkit-tap-highlight-color: transparent;
+    outline: none !important;
+  }
+
+  .faq-accordion-item.is-open .faq-chevron {
+    color: #64748b !important;
   }
 }
 
