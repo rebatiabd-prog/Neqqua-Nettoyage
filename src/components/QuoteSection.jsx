@@ -1,8 +1,20 @@
-import { useState } from 'react';
-import { siteConfig } from '../data/siteData';
-import { Check, Clock, MessageCircle } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { siteConfig, pricingPlans } from '../data/siteData';
+import { Check, Clock, MessageCircle, Lock } from 'lucide-react';
+
+const PENDING_SUBSCRIPTION_KEY = 'neqqua_pending_subscription_v1';
 
 export default function QuoteSection({ selectedFormula = 'abonnement', onFormulaChange, isHighlighted = false }) {
+  const abonnementPlan = Array.isArray(pricingPlans)
+    ? pricingPlans.find((p) => p.id === 'abonnement')
+    : null;
+  const stripeAbonnementUrl = (
+    abonnementPlan?.stripeUrl ||
+    import.meta.env.VITE_STRIPE_ABONNEMENT_URL ||
+    ''
+  ).trim();
+  const hasStripeCheckout = stripeAbonnementUrl.startsWith('http');
+
   const todayStr = (() => {
     try {
       return new Date().toISOString().split('T')[0] || '';
@@ -11,20 +23,78 @@ export default function QuoteSection({ selectedFormula = 'abonnement', onFormula
     }
   })();
 
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    city: '',
-    email: '',
-    preferredDate: '',
-    timeOfDay: 'matin',
-    notes: '',
-    consent: true,
+  const [returnPayload] = useState(() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const isPaymentSuccess =
+        params.get('abonnement') === 'succes' || params.get('payment') === 'success';
+      if (!isPaymentSuccess) return null;
+      const raw = window.localStorage.getItem(PENDING_SUBSCRIPTION_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.name && parsed.phone && parsed.city) {
+        return parsed;
+      }
+      return null;
+    } catch {
+      return null;
+    }
   });
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formData, setFormData] = useState(() => ({
+    name: returnPayload?.name || '',
+    phone: returnPayload?.phone || '',
+    city: returnPayload?.city || '',
+    email: returnPayload?.email || '',
+    preferredDate: returnPayload?.preferredDate || '',
+    timeOfDay: returnPayload?.timeOfDay || 'matin',
+    notes: returnPayload?.notes || '',
+    consent: true,
+  }));
+
+  const [isSubmitted, setIsSubmitted] = useState(() => Boolean(returnPayload));
+  const [isPaidSubscription, setIsPaidSubscription] = useState(() => Boolean(returnPayload));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const hasProcessedReturnRef = useRef(false);
+
+  // Au retour de Stripe (?abonnement=succes ou ?payment=success),
+  // envoie l'e-mail contenant les infos du formulaire UNIQUEMENT après paiement validé.
+  useEffect(() => {
+    if (!returnPayload || hasProcessedReturnRef.current) return;
+    hasProcessedReturnRef.current = true;
+
+    try {
+      window.localStorage.removeItem(PENDING_SUBSCRIPTION_KEY);
+    } catch {
+      // Ignore
+    }
+
+    if (typeof onFormulaChange === 'function') {
+      onFormulaChange('abonnement');
+    }
+
+    fetch('/api/send-quote', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...returnPayload,
+        paymentConfirmed: true,
+      }),
+    }).catch((err) => {
+      console.error('[Erreur envoi post-paiement]', err);
+    });
+
+    const devisEl = document.getElementById('devis');
+    if (devisEl) {
+      setTimeout(() => {
+        devisEl.scrollIntoView({ behavior: 'smooth' });
+      }, 150);
+    }
+  }, [returnPayload, onFormulaChange]);
 
   const handleChange = (e) => {
     if (!e || !e.target) return;
@@ -86,23 +156,47 @@ export default function QuoteSection({ selectedFormula = 'abonnement', onFormula
     setIsSubmitting(true);
     setSubmitError('');
 
+    const payload = {
+      name: trimmedName,
+      phone: trimmedPhone,
+      city: trimmedCity,
+      email: formData?.email?.trim() || '',
+      preferredDate: formData?.preferredDate || '',
+      timeOfDay: formData?.timeOfDay || 'matin',
+      notes: formData?.notes?.trim() || '',
+      consent: Boolean(formData?.consent),
+      formula: getFormulaLabel(selectedFormula),
+    };
+
+    // Si le client a choisi l'abonnement mensuel (299 €) et que le lien Stripe est configuré :
+    // 1. On N'envoie PAS l'e-mail tout de suite.
+    // 2. On sauvegarde les infos du formulaire dans localStorage.
+    // 3. On redirige le client directement vers la page de paiement Stripe.
+    // L'e-mail ne sera envoyé qu'à son retour après paiement validé (?abonnement=succes).
+    if (selectedFormula === 'abonnement' && hasStripeCheckout) {
+      try {
+        window.localStorage.setItem(PENDING_SUBSCRIPTION_KEY, JSON.stringify(payload));
+      } catch {
+        // Fallback silencieux si stockage restreint
+      }
+
+      let checkoutUrl = stripeAbonnementUrl;
+      if (payload.email) {
+        const separator = checkoutUrl.includes('?') ? '&' : '?';
+        checkoutUrl = `${checkoutUrl}${separator}prefilled_email=${encodeURIComponent(payload.email)}`;
+      }
+
+      window.location.assign(checkoutUrl);
+      return;
+    }
+
     try {
       const response = await fetch('/api/send-quote', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: trimmedName,
-          phone: trimmedPhone,
-          city: trimmedCity,
-          email: formData?.email?.trim() || '',
-          preferredDate: formData?.preferredDate || '',
-          timeOfDay: formData?.timeOfDay || 'matin',
-          notes: formData?.notes?.trim() || '',
-          consent: Boolean(formData?.consent),
-          formula: getFormulaLabel(selectedFormula),
-        }),
+        body: JSON.stringify(payload),
       });
 
       // Parsing sécurisé : ne plante jamais même si le serveur retourne du HTML (erreur 502/504)
@@ -112,6 +206,7 @@ export default function QuoteSection({ selectedFormula = 'abonnement', onFormula
         throw new Error(data?.error || "Une erreur est survenue lors de l'envoi.");
       }
 
+      setIsPaidSubscription(false);
       setIsSubmitted(true);
     } catch (err) {
       console.error('[Erreur devis]', err);
@@ -170,7 +265,9 @@ export default function QuoteSection({ selectedFormula = 'abonnement', onFormula
                     fontFamily: 'var(--font-display)',
                   }}
                 >
-                  Demande envoyée avec succès !
+                  {isPaidSubscription
+                    ? 'Paiement validé & Abonnement confirmé !'
+                    : 'Demande envoyée avec succès !'}
                 </h3>
                 <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.6, maxWidth: '440px', margin: '0 auto 1.5rem auto' }}>
                   Merci <strong style={{ color: '#0f172a' }}>{formData?.name || 'Client'}</strong>. Votre demande d'intervention à{' '}
@@ -412,9 +509,33 @@ export default function QuoteSection({ selectedFormula = 'abonnement', onFormula
                     disabled={isSubmitting}
                     style={{ opacity: isSubmitting ? 0.75 : 1, cursor: isSubmitting ? 'wait' : 'pointer' }}
                   >
-                    <span>{isSubmitting ? 'Transmission en cours...' : 'Envoyer ma demande de devis gratuit'}</span>
+                    <span>
+                      {isSubmitting
+                        ? selectedFormula === 'abonnement' && hasStripeCheckout
+                          ? 'Redirection vers le paiement sécurisé...'
+                          : 'Transmission en cours...'
+                        : selectedFormula === 'abonnement'
+                          ? 'Continuer vers le paiement sécurisé (299 € / mois)'
+                          : 'Envoyer ma demande de devis gratuit'}
+                    </span>
                     {!isSubmitting && <span className="quote-submit-arrow" aria-hidden="true">→</span>}
                   </button>
+                  {selectedFormula === 'abonnement' && (
+                    <div
+                      style={{
+                        marginTop: '0.6rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.35rem',
+                        fontSize: '0.78rem',
+                        color: '#64748b',
+                      }}
+                    >
+                      <Lock size={12} strokeWidth={2.4} style={{ color: '#0284c7', flexShrink: 0 }} aria-hidden="true" />
+                      <span>Votre demande est transmise uniquement après validation du paiement sur Stripe.</span>
+                    </div>
+                  )}
                 </div>
               </form>
             )}

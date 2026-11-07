@@ -27,7 +27,7 @@ export default async function handler(req, res) {
       }
     }
 
-    const { name, phone, city, email, formula, preferredDate, timeOfDay, notes } = body || {};
+    const { name, phone, city, email, formula, preferredDate, timeOfDay, notes, paymentConfirmed } = body || {};
 
     const cleanName = (typeof name === 'string' ? name.trim() : '');
     const cleanPhone = (typeof phone === 'string' ? phone.trim() : '');
@@ -35,6 +35,7 @@ export default async function handler(req, res) {
     const cleanEmail = (typeof email === 'string' ? email.trim() : '');
     const cleanFormula = (typeof formula === 'string' ? formula.trim() : 'Non spécifiée');
     const cleanNotes = (typeof notes === 'string' ? notes.trim() : '');
+    const isPaid = Boolean(paymentConfirmed);
 
     // Validation des champs indispensables
     if (!cleanName || !cleanPhone || !cleanCity) {
@@ -97,6 +98,7 @@ export default async function handler(req, res) {
           .header p { margin: 0; font-size: 13px; color: #0284c7; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; }
           .content { padding: 28px 24px; }
           .badge-urgent { display: inline-block; background: #dbeafe; color: #0369a1; padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: 12px; text-transform: uppercase; margin-bottom: 20px; }
+          .badge-paid { display: inline-block; background: #dcfce7; color: #15803d; padding: 6px 14px; border-radius: 999px; font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 20px; }
           .table-info { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
           .table-info td { padding: 12px 10px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
           .table-info td.label { font-weight: 700; color: #64748b; width: 38%; }
@@ -110,10 +112,14 @@ export default async function handler(req, res) {
         <div class="card">
           <div class="header">
             <h1>NEQQUA NETTOYAGE</h1>
-            <p>Nouvelle Demande de Devis en Ligne</p>
+            <p>${isPaid ? 'Nouvel Abonnement Mensuel Payé sur Stripe' : 'Nouvelle Demande de Devis en Ligne'}</p>
           </div>
           <div class="content">
-            <span class="badge-urgent">⏱️ Réponse garantie sous 2h</span>
+            ${
+              isPaid
+                ? '<span class="badge-paid">✅ PAIEMENT STRIPE CONFIRMÉ — 299 € / MOIS</span>'
+                : '<span class="badge-urgent">⏱️ Réponse garantie sous 2h</span>'
+            }
             
             <table class="table-info">
               <tr>
@@ -166,7 +172,9 @@ export default async function handler(req, res) {
         from: 'NEQQUA Devis <onboarding@resend.dev>',
         to: ['contact.neqqua@gmail.com'],
         reply_to: cleanEmail || undefined,
-        subject: `🔔 Devis NEQQUA : ${safeName} — ${safeCity} (${safeDate})`,
+        subject: isPaid
+          ? `✅ Abonnement PAYÉ (299 €/mois) : ${safeName} — ${safeCity} (${safeDate})`
+          : `🔔 Devis NEQQUA : ${safeName} — ${safeCity} (${safeDate})`,
         html: emailHtml,
       }),
     });

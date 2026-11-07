@@ -37,11 +37,6 @@ export default function PricingSection({ onSelectPlan }) {
   }, []);
 
   const handleSelect = (plan) => {
-    if (plan.id === 'abonnement' && plan.stripeUrl && plan.stripeUrl.trim().startsWith('http')) {
-      window.location.assign(plan.stripeUrl.trim());
-      return;
-    }
-
     if (onSelectPlan) {
       onSelectPlan(plan.id);
     } else {
