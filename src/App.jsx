@@ -11,7 +11,7 @@ import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
 
 export default function App() {
-  const [selectedFormula, setSelectedFormula] = useState('abonnement');
+  const [selectedFormula, setSelectedFormula] = useState('horaire');
   const [highlightQuote, setHighlightQuote] = useState(false);
 
   const handleSelectPlan = (planId) => {

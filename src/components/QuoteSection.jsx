@@ -3,8 +3,69 @@ import { siteConfig, pricingPlans } from '../data/siteData';
 import { Check, Clock, MessageCircle, Lock } from 'lucide-react';
 
 const PENDING_SUBSCRIPTION_KEY = 'neqqua_pending_subscription_v1';
+const FORMSUBMIT_ENDPOINT = 'https://formsubmit.co/ajax/rebatiabderrahmane@gmail.com';
 
-export default function QuoteSection({ selectedFormula = 'abonnement', onFormulaChange, isHighlighted = false }) {
+function formatDateFr(dateStr) {
+  if (!dateStr || typeof dateStr !== 'string') return '';
+  try {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    return dateStr;
+  } catch {
+    return dateStr;
+  }
+}
+
+function getTimeSlotLabel(val) {
+  if (val === 'matin') return 'Matin';
+  if (val === 'midi') return 'Midi';
+  if (val === 'soir') return 'Soir';
+  return 'Matin';
+}
+
+async function sendQuoteEmail(payload, isPaid = false) {
+  const dateDisplay = payload?.preferredDate ? formatDateFr(payload.preferredDate) : 'Non précisée';
+  const slotDisplay = getTimeSlotLabel(payload?.timeOfDay);
+
+  const formSubmitBody = {
+    _subject: isPaid
+      ? `✅ Abonnement PAYÉ (299 €/mois) : ${payload.name} — ${payload.city} (${dateDisplay})`
+      : `🔔 Nouveau Devis NEQQUA : ${payload.name} — ${payload.city} (${dateDisplay})`,
+    _template: 'box',
+    _captcha: 'false',
+    ...(payload.email ? { _replyto: payload.email } : {}),
+    'Statut de la demande': isPaid
+      ? '✅ PAIEMENT STRIPE CONFIRMÉ — 299 € / MOIS'
+      : '⏱️ Demande de devis (Réponse garantie sous 2h)',
+    'Nom et prénom': payload.name,
+    'Téléphone': payload.phone,
+    'Commune (Essonne)': payload.city,
+    'Adresse e-mail': payload.email || 'Non renseignée',
+    'Formule choisie': payload.formula,
+    'Date souhaitée': dateDisplay,
+    'Moment de la journée': slotDisplay,
+    'Détail du besoin': payload.notes || 'Aucune précision complémentaire.',
+  };
+
+  const response = await fetch(FORMSUBMIT_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(formSubmitBody),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data?.success === 'false' || data?.success === false) {
+    throw new Error(data?.message || "Une erreur est survenue lors de l'envoi.");
+  }
+  return data;
+}
+
+export default function QuoteSection({ selectedFormula = 'horaire', onFormulaChange, isHighlighted = false }) {
   const abonnementPlan = Array.isArray(pricingPlans)
     ? pricingPlans.find((p) => p.id === 'abonnement')
     : null;
@@ -75,16 +136,7 @@ export default function QuoteSection({ selectedFormula = 'abonnement', onFormula
       onFormulaChange('abonnement');
     }
 
-    fetch('/api/send-quote', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...returnPayload,
-        paymentConfirmed: true,
-      }),
-    }).catch((err) => {
+    sendQuoteEmail(returnPayload, true).catch((err) => {
       console.error('[Erreur envoi post-paiement]', err);
     });
 
@@ -113,26 +165,6 @@ export default function QuoteSection({ selectedFormula = 'abonnement', onFormula
     if (val === 'abonnement') return 'Abonnement mensuel (299 €)';
     if (val === 'horaire') return "Prestation à l'heure (30 € / h)";
     return 'Autre / Devis sur-mesure';
-  };
-
-  const formatDateFr = (dateStr) => {
-    if (!dateStr || typeof dateStr !== 'string') return '';
-    try {
-      const parts = dateStr.split('-');
-      if (parts.length === 3) {
-        return `${parts[2]}/${parts[1]}/${parts[0]}`;
-      }
-      return dateStr;
-    } catch {
-      return dateStr;
-    }
-  };
-
-  const getTimeSlotLabel = (val) => {
-    if (val === 'matin') return 'Matin';
-    if (val === 'midi') return 'Midi';
-    if (val === 'soir') return 'Soir';
-    return 'Matin';
   };
 
   const handleSubmit = async (e) => {
@@ -191,20 +223,7 @@ export default function QuoteSection({ selectedFormula = 'abonnement', onFormula
     }
 
     try {
-      const response = await fetch('/api/send-quote', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      // Parsing sécurisé : ne plante jamais même si le serveur retourne du HTML (erreur 502/504)
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(data?.error || "Une erreur est survenue lors de l'envoi.");
-      }
+      await sendQuoteEmail(payload, false);
 
       setIsPaidSubscription(false);
       setIsSubmitted(true);
