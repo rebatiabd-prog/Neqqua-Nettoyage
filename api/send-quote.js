@@ -42,6 +42,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Nom, téléphone et commune sont obligatoires.' });
     }
 
+    const cleanPhoneDigits = cleanPhone.replace(/[\s.\-_/()]/g, '');
+    const isFrenchPhone = /^(0[1-9]\d{8}|(\+33|0033)[1-9]\d{8})$/.test(cleanPhoneDigits);
+    if (!isFrenchPhone) {
+      return res.status(400).json({ error: 'Numéro de téléphone invalide (10 chiffres attendus).' });
+    }
+
     const apiKey = process.env.RESEND_API_KEY;
 
     // Formatage défensif de la date d'intervention
@@ -97,14 +103,13 @@ export default async function handler(req, res) {
           .header h1 { margin: 0 0 6px 0; font-size: 20px; font-weight: 800; letter-spacing: 0.05em; color: #ffffff; }
           .header p { margin: 0; font-size: 13px; color: #0284c7; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em; }
           .content { padding: 28px 24px; }
-          .badge-urgent { display: inline-block; background: #dbeafe; color: #0369a1; padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: 12px; text-transform: uppercase; margin-bottom: 20px; }
           .badge-paid { display: inline-block; background: #dcfce7; color: #15803d; padding: 6px 14px; border-radius: 999px; font-weight: 800; font-size: 12px; text-transform: uppercase; margin-bottom: 20px; }
           .table-info { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
           .table-info td { padding: 12px 10px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
           .table-info td.label { font-weight: 700; color: #64748b; width: 38%; }
           .table-info td.value { font-weight: 600; color: #0f172a; }
           .phone-link { color: #0284c7; font-weight: 800; text-decoration: none; font-size: 16px; }
-          .notes-box { background: #f8fafc; border-left: 4px solid #0284c7; padding: 14px 16px; border-radius: 4px; font-size: 14px; color: #334155; line-height: 1.5; margin-bottom: 20px; }
+          .notes-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px 16px; border-radius: 8px; font-size: 14px; color: #334155; line-height: 1.5; margin-bottom: 20px; }
           .footer { background: #f8fafc; padding: 18px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
         </style>
       </head>
@@ -118,7 +123,7 @@ export default async function handler(req, res) {
             ${
               isPaid
                 ? '<span class="badge-paid">✅ PAIEMENT STRIPE CONFIRMÉ — 299 € / MOIS</span>'
-                : '<span class="badge-urgent">⏱️ Réponse garantie sous 2h</span>'
+                : ''
             }
             
             <table class="table-info">
@@ -170,11 +175,11 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         from: 'NEQQUA Devis <onboarding@resend.dev>',
-        to: ['contact.neqqua@gmail.com'],
+        to: [process.env.QUOTE_RECIPIENT_EMAIL || 'rebatiabderrahmane@gmail.com'],
         reply_to: cleanEmail || undefined,
         subject: isPaid
           ? `✅ Abonnement PAYÉ (299 €/mois) : ${safeName} — ${safeCity} (${safeDate})`
-          : `🔔 Devis NEQQUA : ${safeName} — ${safeCity} (${safeDate})`,
+          : 'Nouvelle demande de devis',
         html: emailHtml,
       }),
     });

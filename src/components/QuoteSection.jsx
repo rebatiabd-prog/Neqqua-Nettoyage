@@ -3,7 +3,6 @@ import { siteConfig, pricingPlans } from '../data/siteData';
 import { Check, Clock, MessageCircle, Lock } from 'lucide-react';
 
 const PENDING_SUBSCRIPTION_KEY = 'neqqua_pending_subscription_v1';
-const FORMSUBMIT_ENDPOINT = 'https://formsubmit.co/ajax/rebatiabderrahmane@gmail.com';
 
 function formatDateFr(dateStr) {
   if (!dateStr || typeof dateStr !== 'string') return '';
@@ -26,41 +25,20 @@ function getTimeSlotLabel(val) {
 }
 
 async function sendQuoteEmail(payload, isPaid = false) {
-  const dateDisplay = payload?.preferredDate ? formatDateFr(payload.preferredDate) : 'Non précisée';
-  const slotDisplay = getTimeSlotLabel(payload?.timeOfDay);
-
-  const formSubmitBody = {
-    _subject: isPaid
-      ? `✅ Abonnement PAYÉ (299 €/mois) : ${payload.name} — ${payload.city} (${dateDisplay})`
-      : `🔔 Nouveau Devis NEQQUA : ${payload.name} — ${payload.city} (${dateDisplay})`,
-    _template: 'box',
-    _captcha: 'false',
-    ...(payload.email ? { _replyto: payload.email } : {}),
-    'Statut de la demande': isPaid
-      ? '✅ PAIEMENT STRIPE CONFIRMÉ — 299 € / MOIS'
-      : '⏱️ Demande de devis (Réponse garantie sous 2h)',
-    'Nom et prénom': payload.name,
-    'Téléphone': payload.phone,
-    'Commune (Essonne)': payload.city,
-    'Adresse e-mail': payload.email || 'Non renseignée',
-    'Formule choisie': payload.formula,
-    'Date souhaitée': dateDisplay,
-    'Moment de la journée': slotDisplay,
-    'Détail du besoin': payload.notes || 'Aucune précision complémentaire.',
-  };
-
-  const response = await fetch(FORMSUBMIT_ENDPOINT, {
+  const response = await fetch('/api/send-quote', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Accept: 'application/json',
     },
-    body: JSON.stringify(formSubmitBody),
+    body: JSON.stringify({
+      ...payload,
+      paymentConfirmed: isPaid,
+    }),
   });
 
   const data = await response.json().catch(() => ({}));
-  if (!response.ok || data?.success === 'false' || data?.success === false) {
-    throw new Error(data?.message || "Une erreur est survenue lors de l'envoi.");
+  if (!response.ok) {
+    throw new Error(data?.error || "Une erreur est survenue lors de l'envoi.");
   }
   return data;
 }
@@ -153,6 +131,7 @@ export default function QuoteSection({ selectedFormula = 'horaire', onFormulaCha
     const { name, value, type, checked } = e.target;
     const val = type === 'checkbox' ? checked : value;
     setFormData((prev) => ({ ...prev, [name]: val }));
+    setSubmitError('');
   };
 
   const handleFormulaChange = (e) => {
@@ -172,21 +151,41 @@ export default function QuoteSection({ selectedFormula = 'horaire', onFormulaCha
       e.preventDefault();
     }
 
+    setSubmitError('');
+
     const trimmedName = formData?.name?.trim() || '';
     const trimmedPhone = formData?.phone?.trim() || '';
     const trimmedCity = formData?.city?.trim() || '';
+    const trimmedNotes = formData?.notes?.trim() || '';
 
-    if (!trimmedName || !trimmedPhone || !trimmedCity) {
-      alert('Veuillez renseigner votre nom, votre numéro de téléphone et votre commune en Essonne.');
+    if (!trimmedName) {
+      setSubmitError('Veuillez renseigner votre nom et prénom.');
       return;
     }
+
+    const cleanPhoneDigits = trimmedPhone.replace(/[\s.\-_/()]/g, '');
+    const isFrenchPhone = /^(0[1-9]\d{8}|(\+33|0033)[1-9]\d{8})$/.test(cleanPhoneDigits);
+    if (!trimmedPhone || !isFrenchPhone) {
+      setSubmitError('Veuillez renseigner un numéro de téléphone valide à 10 chiffres (ex : 06 12 34 56 78).');
+      return;
+    }
+
+    if (!trimmedCity) {
+      setSubmitError('Veuillez renseigner votre commune en Essonne.');
+      return;
+    }
+
+    if (!trimmedNotes) {
+      setSubmitError('Veuillez préciser brièvement votre besoin (surface, pièces, etc.).');
+      return;
+    }
+
     if (!formData?.consent) {
-      alert("Veuillez accepter l'utilisation de vos données pour le traitement de votre demande.");
+      setSubmitError("Veuillez accepter l'utilisation de vos données pour le traitement de votre demande.");
       return;
     }
 
     setIsSubmitting(true);
-    setSubmitError('');
 
     const payload = {
       name: trimmedName,
@@ -318,7 +317,7 @@ export default function QuoteSection({ selectedFormula = 'horaire', onFormulaCha
                 >
                   <Clock size={16} style={{ color: '#0284c7', flexShrink: 0 }} aria-hidden="true" />
                   <span>
-                    Réponse garantie sous <strong style={{ color: '#0f172a' }}>2 heures ouvrées</strong> par appel ou SMS au{' '}
+                    Notre équipe vous recontacte rapidement par appel ou SMS au{' '}
                     <strong style={{ color: '#0f172a' }}>{formData?.phone || phoneDisplay}</strong>.
                   </span>
                 </div>
@@ -330,7 +329,7 @@ export default function QuoteSection({ selectedFormula = 'horaire', onFormulaCha
               <form onSubmit={handleSubmit}>
                 <h3 className="quote-form-title" style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem' }}>Formulaire de demande de devis & réservation</h3>
                 <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '0.85rem' }}>
-                  Choisissez votre formule et détaillez votre besoin, réponse garantie sous 2h.
+                  Choisissez votre formule et détaillez votre besoin.
                 </p>
 
                 {/* Nom et prénom */}
