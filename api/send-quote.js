@@ -122,33 +122,33 @@ export default async function handler(req, res) {
           <div class="content">
             ${
               isPaid
-                ? '<span class="badge-paid">✅ PAIEMENT STRIPE CONFIRMÉ — 299 € / MOIS</span>'
+                ? '<span class="badge-paid">PAIEMENT STRIPE CONFIRMÉ — 299 € / MOIS</span>'
                 : ''
             }
             
             <table class="table-info">
               <tr>
-                <td class="label">👤 Nom du client :</td>
+                <td class="label">Nom du client :</td>
                 <td class="value">${safeName}</td>
               </tr>
               <tr>
-                <td class="label">📞 Téléphone :</td>
+                <td class="label">Téléphone :</td>
                 <td class="value"><a href="tel:${safePhone}" class="phone-link">${safePhone}</a></td>
               </tr>
               <tr>
-                <td class="label">📍 Commune en Essonne :</td>
+                <td class="label">Commune en Essonne :</td>
                 <td class="value"><strong>${safeCity}</strong></td>
               </tr>
               <tr>
-                <td class="label">✉️ Adresse e-mail :</td>
+                <td class="label">Adresse e-mail :</td>
                 <td class="value">${safeEmail ? `<a href="mailto:${safeEmail}">${safeEmail}</a>` : 'Non renseignée'}</td>
               </tr>
               <tr>
-                <td class="label">🏷️ Formule choisie :</td>
+                <td class="label">Formule choisie :</td>
                 <td class="value"><strong>${safeFormula}</strong></td>
               </tr>
               <tr>
-                <td class="label">📅 Date souhaitée :</td>
+                <td class="label">Date souhaitée :</td>
                 <td class="value"><strong>${safeDate}</strong> (${safeSlot})</td>
               </tr>
             </table>
@@ -178,7 +178,7 @@ export default async function handler(req, res) {
         to: [process.env.QUOTE_RECIPIENT_EMAIL || 'rebatiabderrahmane@gmail.com'],
         reply_to: cleanEmail || undefined,
         subject: isPaid
-          ? `✅ Abonnement PAYÉ (299 €/mois) : ${safeName} — ${safeCity} (${safeDate})`
+          ? `Abonnement PAYÉ (299 €/mois) : ${safeName} — ${safeCity} (${safeDate})`
           : 'Nouvelle demande de devis',
         html: emailHtml,
       }),
