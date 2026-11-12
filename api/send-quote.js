@@ -175,7 +175,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         from: 'NEQQUA Devis <onboarding@resend.dev>',
-        to: [process.env.QUOTE_RECIPIENT_EMAIL || 'rebatiabderrahmane@gmail.com'],
+        to: [process.env.QUOTE_RECIPIENT_EMAIL || 'contact.neqqua@gmail.com'],
         reply_to: cleanEmail || undefined,
         subject: isPaid
           ? `Abonnement PAYÉ (299 €/mois) : ${safeName} — ${safeCity} (${safeDate})`
