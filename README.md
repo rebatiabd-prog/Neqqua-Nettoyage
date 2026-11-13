@@ -1,16 +1,36 @@
-# React + Vite
+# NEQQUA NETTOYAGE
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Site web professionnel pour **NEQQUA NETTOYAGE**, entreprise spécialisée dans l'entretien et le ménage à domicile en Essonne (91).
 
-Currently, two official plugins are available:
+## 🚀 Fonctionnalités
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Présentation des prestations** : Ménage complet, détartrage sanitaires & douche, nettoyage cuisine, électroménager et vitres.
+- **Grille tarifaire transparente** : Prestation ponctuelle à l'heure (39,99 € / h) et formule abonnement mensuel régulier (299 € / mois).
+- **Formulaire de devis interactif** : Envoi instantané des demandes par e-mail avec validation des données et notification via l'API [Resend](https://resend.com).
+- **Paiement Stripe** : Prêt pour le prélèvement automatique de l'abonnement mensuel (Stripe Checkout).
+- **Canaux de contact direct** : Appel téléphonique direct et bouton de contact instantané sur WhatsApp.
+- **SEO & Conformité** : Optimisation pour le référencement local en Essonne, mentions légales intégrées, politique de confidentialité RGPD et balises Open Graph pour les partages réseaux sociaux.
 
-## React Compiler
+## 🛠️ Stack Technique
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend** : React 19 + Vite 8
+- **Styles** : CSS moderne épuré, typographie Google Fonts (Montserrat & Roboto)
+- **Icônes** : Lucide React
+- **Backend Serverless** : API Node.js (`/api/send-quote.js`) compatible Vercel
+- **E-mails transactionnels** : Resend API
 
-## Expanding the ESLint configuration
+## 💻 Commandes
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+# Installation des dépendances
+npm install
+
+# Démarrage du serveur de développement
+npm run dev
+
+# Compilation pour la production
+npm run build
+
+# Vérification du code
+npm run lint
+```
