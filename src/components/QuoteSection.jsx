@@ -142,7 +142,7 @@ export default function QuoteSection({ selectedFormula = 'horaire', onFormulaCha
 
   const getFormulaLabel = (val) => {
     if (val === 'abonnement') return 'Abonnement mensuel (299 €)';
-    if (val === 'horaire') return "Prestation à l'heure (30 € / h)";
+    if (val === 'horaire') return "Prestation à l'heure (39,99 € / h)";
     return 'Autre / Devis sur-mesure';
   };
 
@@ -412,7 +412,7 @@ export default function QuoteSection({ selectedFormula = 'horaire', onFormulaCha
                     className="input-mock quote-select"
                   >
                     <option value="abonnement">Abonnement mensuel (299 €)</option>
-                    <option value="horaire">Prestation à l'heure (30 € / h)</option>
+                    <option value="horaire">Prestation à l'heure (39,99 € / h)</option>
                     <option value="sur-mesure">Autre / Devis sur-mesure</option>
                   </select>
                 </div>

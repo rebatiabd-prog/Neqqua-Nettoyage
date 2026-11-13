@@ -86,13 +86,13 @@ export const pricingPlans = [
     badge: 'PONCTUEL & SUR-MESURE',
     subtitleBadge: 'Min. 2 heures',
     title: "Prestation à l'heure",
-    price: '30 €',
+    price: '39,99 €',
     unit: '/ heure TTC',
     desc: 'Pour un ménage ponctuel, un grand nettoyage ou un besoin exceptionnel.',
     isFeatured: false,
     ctaText: 'Demander un devis',
     features: [
-      'Facturée à l\'heure, au tarif fixe de 30 €',
+      'Facturée à l\'heure, au tarif de 39,99 €',
       'Intervention minimale de 2 heures',
       'Produits et matériel fournis',
       'Devis gratuit par téléphone ou formulaire',
@@ -113,7 +113,7 @@ export const pricingPlans = [
     stripeUrl: import.meta.env.VITE_STRIPE_ABONNEMENT_URL || '',
     stripePortalUrl: import.meta.env.VITE_STRIPE_PORTAL_URL || '',
     features: [
-      '3 à 4 interventions par semaine incluses (au choix)',
+      '3 interventions par semaine incluses',
       'Même intervenante à chaque passage',
       'Produits et matériel fournis',
       'Planning fixe, à deux semaines d\'avance',
@@ -152,7 +152,7 @@ export const faqItems = [
     id: 'faq-5',
     question: 'Quels sont vos délais d\'intervention et les tarifs ?',
     answer:
-      'Nos tarifs sont transparents : 30 €/h en ponctuel ou 299 €/mois pour 3 à 4 interventions par semaine au choix. Nous établissons un devis clair sous 2h après votre demande. En cas de besoin urgent, un simple appel direct ou un échange WhatsApp nous permet généralement de caler une intervention sous 24h à 48h selon nos disponibilités de la semaine.',
+      'Nos tarifs sont transparents : 39,99 €/h en ponctuel ou 299 €/mois pour 3 interventions par semaine. Nous établissons un devis clair sous 2h après votre demande. En cas de besoin urgent, un simple appel direct ou un échange WhatsApp nous permet généralement de caler une intervention sous 24h à 48h selon nos disponibilités de la semaine.',
   },
   {
     id: 'faq-6',
