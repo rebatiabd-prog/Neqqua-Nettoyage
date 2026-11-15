@@ -162,54 +162,6 @@ export const faqItems = [
   },
 ];
 
-export const reviewsData = [
-  {
-    id: 'rev-1',
-    name: 'Laurent & Émilie B.',
-    role: 'Arpajon • Abonnement mensuel',
-    avatar: '/images/laurent-emilie-b.jpg',
-    stars: 5,
-    text: "Nous avons souscrit à l'abonnement mensuel il y a 4 mois. L'équipe est d'une ponctualité et d'une discrétion remarquables. Notre parquet et les parois vitrées sont étincelants, sans aucune trace.",
-    isFeatured: false,
-  },
-  {
-    id: 'rev-2',
-    name: 'Stéphane R.',
-    role: 'Brétigny-sur-Orge • Grand ménage complet',
-    avatar: '/images/stephane-r.jpg',
-    stars: 5,
-    text: "Remise en état avant emménagement. Les joints, la cuisine dégraissée et les vitres ont été récupérés comme neufs. Devis clair reçu en 30 minutes sur WhatsApp. Je recommande les yeux fermés.",
-    isFeatured: true,
-  },
-  {
-    id: 'rev-3',
-    name: 'Camille D.',
-    role: 'Massy • Prestation régulière',
-    avatar: '/images/camille-d.jpg',
-    stars: 5,
-    text: "Le protocole d'hygiène strict avec microfibres séparées et la qualité du matériel professionnel font toute la différence. On sent le vrai souci du détail et le respect du lieu à chaque passage.",
-    isFeatured: false,
-  },
-  {
-    id: 'rev-4',
-    name: 'Marc & Valérie T.',
-    role: 'Sainte-Geneviève-des-Bois • Ménage hebdomadaire',
-    avatar: '/images/marc-t.jpg',
-    stars: 5,
-    text: "Un vrai soulagement après nos journées de travail chargées. Retrouver notre maison impeccable chaque jeudi soir avec une odeur fraîche et des sanitaires immaculés n'a pas de prix.",
-    isFeatured: false,
-  },
-  {
-    id: 'rev-5',
-    name: 'Nathalie R.',
-    role: 'Évry-Courcouronnes • Entretien soigné',
-    avatar: '/images/nathalie-r.jpg',
-    stars: 5,
-    text: "Qualité de service digne d'un grand hôtel. Discrétion absolue, personnel de confiance et finitions soignées jusque dans les moindres recoins de la maison.",
-    isFeatured: false,
-  },
-];
-
 export const zoneInterventionData = {
   title: "Basés à Arpajon, nous intervenons dans toute l'Essonne",
   subtitle: "Particuliers et résidences : profitez d'un service de ménage à domicile de proximité, fiable et réactif sur l'ensemble des communes du département.",

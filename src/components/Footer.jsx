@@ -85,11 +85,6 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#avis">
-                  <span>→</span> Avis de nos clients
-                </a>
-              </li>
-              <li>
                 <a href="#faq">
                   <span>→</span> Questions fréquentes (FAQ)
                 </a>

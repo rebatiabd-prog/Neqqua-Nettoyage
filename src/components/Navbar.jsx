@@ -202,11 +202,6 @@ export default function Navbar() {
             <ArrowRight size={16} strokeWidth={2.2} className="mobile-nav-arrow" aria-hidden="true" />
           </a>
 
-          <a href="#avis" className="mobile-nav-item" onClick={closeMenu}>
-            <span className="mobile-nav-label">Avis de nos clients</span>
-            <ArrowRight size={16} strokeWidth={2.2} className="mobile-nav-arrow" aria-hidden="true" />
-          </a>
-
           <a href="#faq" className="mobile-nav-item" onClick={closeMenu}>
             <span className="mobile-nav-label">Questions fréquentes (FAQ)</span>
             <ArrowRight size={16} strokeWidth={2.2} className="mobile-nav-arrow" aria-hidden="true" />

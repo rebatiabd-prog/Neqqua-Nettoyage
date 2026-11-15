@@ -5,7 +5,6 @@ import ServicesSection from './components/ServicesSection';
 import PricingSection from './components/PricingSection';
 import ZoneSection from './components/ZoneSection';
 import QuoteSection from './components/QuoteSection';
-import ReviewsSection from './components/ReviewsSection';
 import FaqSection from './components/FaqSection';
 import Footer from './components/Footer';
 import FloatingWhatsApp from './components/FloatingWhatsApp';
@@ -40,7 +39,6 @@ export default function App() {
           onFormulaChange={setSelectedFormula}
           isHighlighted={highlightQuote}
         />
-        <ReviewsSection />
         <FaqSection />
       </main>
       <Footer />
