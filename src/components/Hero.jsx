@@ -124,6 +124,28 @@ export default function Hero() {
     };
   }, [tryPlay]);
 
+  // Hauteur physique réelle de l'écran (iPhone) : le Hero couvre aussi
+  // la zone sous la barre flottante Safari, là où 100lvh s'arrête trop tôt.
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || typeof window === 'undefined' || !window.screen) return undefined;
+
+    const applyScreenHeight = () => {
+      const { width, height } = window.screen;
+      const isPortrait = window.innerHeight >= window.innerWidth;
+      const screenH = isPortrait ? Math.max(width, height) : Math.min(width, height);
+      section.style.setProperty('--hero-screen-h', `${screenH}px`);
+    };
+
+    applyScreenHeight();
+    window.addEventListener('orientationchange', applyScreenHeight);
+    window.addEventListener('resize', applyScreenHeight, { passive: true });
+    return () => {
+      window.removeEventListener('orientationchange', applyScreenHeight);
+      window.removeEventListener('resize', applyScreenHeight);
+    };
+  }, []);
+
   const phoneCall = siteConfig?.phoneCall || '+33659519859';
   const phoneDisplay = siteConfig?.phoneDisplay || '06 59 51 98 59';
 

@@ -1212,6 +1212,7 @@ ul {
     height: auto;
     min-height: 100vh;
     min-height: 100lvh;
+    min-height: max(100lvh, var(--hero-screen-h, 100lvh));
     width: 100%;
     padding-top: max(4.5rem, calc(env(safe-area-inset-top, 0px) + 3.75rem));
     padding-bottom: max(6.5rem, calc(env(safe-area-inset-bottom, 0px) + 5.5rem));
