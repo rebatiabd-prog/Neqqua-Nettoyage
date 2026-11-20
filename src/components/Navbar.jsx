@@ -5,6 +5,23 @@ import { MessageCircle, Phone, X, MapPin, ArrowRight } from 'lucide-react';
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // Le tiroir n'existe dans le DOM que lorsqu'il est utilisé :
+  // sinon Safari iOS détecte ce bloc fixe collé en bas de l'écran
+  // et transforme sa barre flottante transparente en bande opaque.
+  const [isMenuMounted, setIsMenuMounted] = useState(false);
+
+  useEffect(() => {
+    if (isMobileMenuOpen || !isMenuMounted) return undefined;
+    const unmountTimer = setTimeout(() => setIsMenuMounted(false), 380);
+    return () => clearTimeout(unmountTimer);
+  }, [isMobileMenuOpen, isMenuMounted]);
+
+  const openMenu = useCallback(() => {
+    setIsMenuMounted(true);
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => setIsMobileMenuOpen(true));
+    });
+  }, []);
 
   // Détection du scroll cadencée avec requestAnimationFrame (60 FPS, zéro re-render inutile)
   useEffect(() => {
@@ -124,7 +141,7 @@ export default function Navbar() {
             <button
               type="button"
               className={`btn-burger ${isMobileMenuOpen ? 'is-active' : ''}`}
-              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              onClick={() => (isMobileMenuOpen ? closeMenu() : openMenu())}
               aria-label={isMobileMenuOpen ? 'Fermer le menu de navigation' : 'Ouvrir le menu de navigation'}
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-nav-drawer"
@@ -139,6 +156,8 @@ export default function Navbar() {
         </div>
       </header>
 
+      {isMenuMounted && (
+      <>
       {/* Voile d'assombrissement indépendant (Backdrop) */}
       <div
         className={`mobile-nav-backdrop ${isMobileMenuOpen ? 'is-visible' : ''}`}
@@ -243,6 +262,8 @@ export default function Navbar() {
           </div>
         </div>
       </aside>
+      </>
+      )}
     </>
   );
 }
